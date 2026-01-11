@@ -1,368 +1,163 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
+import { usePlayerContext } from "../contexts/PlayerContext";
+import { useGetQuestions } from "../hooks/useQuestions";
+import { useUpdateSession } from "../hooks/useSession";
+import { useCreateAnswer, useGetAnswers } from "../hooks/useAnswers";
+import Spinner from "./Spinner";
+import Error from "../components/Error";
+import TriviaGameTimer from "../components/TriviaGameTimer";
+import TriviaQuestionDisplay from "../components/TriviaQuestionDisplay";
+import TriviaGameResults from "../components/TriviaGameResults";
 
-const player = {
-  id: 1,
-  nickname: "SneakySnake",
-  score: 0,
-  // if this were a guest player we would also need the session id and user id
-};
-
-const gameAnswers = [
-  {
-    id: 1,
-    sessionId: 1,
-    userId: 1,
-    // questionId: 1,
-    isCorrect: true,
-  },
-  {
-    id: 2,
-    sessionId: 1,
-    userId: 2,
-    // questionId: 1,
-    isCorrect: false,
-  },
-  {
-    id: 2,
-    sessionId: 1,
-    userId: 3,
-    // questionId: 1,
-    isCorrect: true,
-  },
-];
-
-const tempQuestions = [
-  {
-    questionId: 1,
-    questionNum: 1,
-    text: "What are the names of Harry's parents?",
-    options: [
-      "James & Lily",
-      "Tom & Martha",
-      "Severus & Eileen",
-      "Ron & Hermoine",
-    ],
-    answer: 0,
-    points: 20,
-  },
-  {
-    questionId: 2,
-    questionNum: 2,
-    text: "What's the name of the third book?",
-    options: [
-      "Prisoner of Azkaban",
-      "Order of The Pheonix",
-      "Half Blood Prince",
-      "Cursed Child",
-    ],
-    answer: 0,
-    points: 20,
-  },
-  {
-    questionId: 3,
-    questionNum: 3,
-    text: "Who is Harry's uncle?",
-    options: [
-      "Remus Lupin",
-      "Sirius Black",
-      "Severus Snape",
-      "Albus Dumbledore",
-    ],
-    answer: 1,
-    points: 20,
-  },
-  {
-    questionId: 4,
-    questionNum: 4,
-    text: "What position did Harry play in Quidditch?",
-    options: ["Seeker", "Batter", "Keeper", "Snitch"],
-    answer: 0,
-    points: 20,
-  },
-];
-
-let tempGameSession = {
-  id: 1,
-  hostId: 1,
-  gameId: 1,
-  sessionCode: 123456,
-  status: "active",
-  currentQuestionId: 1,
-  currentQuestionStart: "2025-08-26T16:53:00Z",
-  questionDuration: 20, // seconds
-};
-
-const tempGame = {
-  id: 1,
-  ownerId: 1,
-  title: "Harry Potter Trivia",
-  gameType: "Trivia",
-  description:
-    "Answer some general trivia questions about everyone's favourite Wizarding franchise!",
-  isPrivate: false,
-};
-
-export default function TriviaGame() {
-  const [gameSession, setGameSession] = useState(tempGameSession);
+export default function TriviaGame({ game, session }) {
+  const { currentPlayer } = usePlayerContext();
+  const { questions, isLoadingQuestions, error: questionsError } = useGetQuestions(game.id);
+  const { updateSession } = useUpdateSession();
+  const { createAnswer } = useCreateAnswer();
+  const { answers: gameAnswers, isLoadingAnswers } = useGetAnswers(session.id);
+  
   const [timeRemaining, setTimeRemaining] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [showAnswers, setShowAnswers] = useState(false);
   const [isAnswerLocked, setIsAnswerLocked] = useState(false);
+  
+  const currentQuestionId = session.currentQuestionId;
+  const currentQuestion = currentQuestionId ? questions?.find((q) => q.id === currentQuestionId) : null;
+  const questionIndex = currentQuestionId ? questions?.findIndex((q) => q.id === currentQuestionId) : null;
 
-  // Get current question based on currentQuestionId
-  const currentQuestion = tempQuestions.find(
-    (q) => q.questionId === gameSession.currentQuestionId
-  );
 
-  // Calculate time remaining
+  const isHostingId = localStorage.getItem("isHostingId");
+  const isHost = isHostingId ? JSON.parse(isHostingId) === session.id : false;
+
+  const handleNextQuestion = () => {
+    if (!questions) return;
+    
+    let nextQuestionIndex;
+    if (!currentQuestion) {
+     nextQuestionIndex = 0;
+    } else {
+     nextQuestionIndex = questionIndex + 1;
+    }
+  
+    if (nextQuestionIndex < questions.length) {
+      const nextQuestion = questions[nextQuestionIndex];
+      updateSession({
+        id: session.id,
+        updates: {
+          currentQuestionId: nextQuestion.id,
+          currentQuestionStartTime: new Date().toISOString(),
+        },
+      });
+    } else {
+      // End game
+      updateSession({
+        id: session.id,
+        updates: {
+          status: "finished",
+        },
+      });
+    }
+  };
+
+  // Timer logic
   useEffect(() => {
+    if (!session.currentQuestionStartTime) return;
+
     const calculateTimeRemaining = () => {
       const now = new Date().getTime();
-      const startTime = new Date(gameSession.currentQuestionStart).getTime();
+      const startTime = new Date(session.currentQuestionStartTime).getTime();
       const elapsed = Math.floor((now - startTime) / 1000);
-      const remaining = Math.max(0, gameSession.questionDuration - elapsed);
+      // Default 20s duration if not specified
+      const duration = session.questionDuration || 20;
+      const remaining = Math.max(0, duration - elapsed);
       setTimeRemaining(remaining);
 
       if (remaining === 0 && !showAnswers) {
         setShowAnswers(true);
+      } else if (remaining > 0 && showAnswers) {
+        // Reset showAnswers if we moved to next question (time > 0)
+        setShowAnswers(false);
+        setSelectedAnswer(null);
+        setIsAnswerLocked(false);
       }
     };
 
-    // Calculate immediately
     calculateTimeRemaining();
-
-    // Update every second
     const interval = setInterval(calculateTimeRemaining, 1000);
-
     return () => clearInterval(interval);
-  }, [
-    gameSession.currentQuestionStart,
-    gameSession.questionDuration,
-    showAnswers,
-  ]);
+  }, [session.currentQuestionStartTime, session.questionDuration, showAnswers]);
 
-  // Handle answer selection
   const handleAnswerSelect = (answerIndex) => {
     if (!isAnswerLocked && timeRemaining > 0) {
       setSelectedAnswer(answerIndex);
       setIsAnswerLocked(true);
+
+      // Submit answer
+      if (currentPlayer) {
+        const isCorrect = answerIndex === currentQuestion.answer;
+        createAnswer({
+          sessionId: session.id,
+          playerId: currentPlayer.id, // Using player ID, not auth user ID
+          questionId: currentQuestion.id,
+          isCorrect,
+          nickname: currentPlayer.nickname,
+          // got rid of answer index field for now
+        });
+      }
     }
   };
 
-  // Handle next question
-  const handleNextQuestion = () => {
-    const nextQuestionId = gameSession.currentQuestionId + 1;
-    const now = new Date().toISOString();
 
-    setGameSession((prev) => ({
-      ...prev,
-      currentQuestionId: nextQuestionId,
-      currentQuestionStart: now,
-    }));
+  if (isLoadingQuestions || isLoadingAnswers) return <Spinner />;
+  if (questionsError) return <Error message="Failed to load questions" />;
 
-    // Reset state for new question
-    setSelectedAnswer(null);
-    setIsAnswerLocked(false);
-    setShowAnswers(false);
-  };
+  if (!currentQuestion) {
+    return (
+      <div className="text-center p-10 text-white">
+        {isHost ? (
+          <div className="flex flex-col items-center gap-4">
+            <p className="text-xl mb-4">Start with the first question!</p>
+            <button className="next-question-btn" onClick={handleNextQuestion}>
+              Start Game
+            </button>
+          </div>
+        ) : (
+          <p className="text-xl">Waiting for first question...</p>
+        )}
+      </div>
+    );
+  }
+
+  // Filter answers for current question
+  const currentQuestionAnswers = gameAnswers?.filter(a => a.questionId === currentQuestion.id) || [];
 
   return (
-    <div className="trivia-game">
-      <div className="game-header">
-        <h1>{tempGame.title}</h1>
-        <div className="question-info">
-          <h2>Question {currentQuestion?.questionNum}</h2>
-          <div className="time-remaining">Time: {timeRemaining}s</div>
+    <div className="max-w-[800px] mx-auto p-5 font-sans">
+      <div className="text-center mb-8">
+        <h1 className="text-gray-800 text-3xl font-bold mb-5">{game.title}</h1>
+        <div className="flex justify-between items-center bg-gray-100 p-4 rounded-lg">
+          <h2 className="text-gray-600 font-bold m-0 text-xl">
+             Question {questions.findIndex(q => q.id === currentQuestionId) + 1}
+          </h2>
+          <TriviaGameTimer timeRemaining={timeRemaining} />
         </div>
-      </div>
-
-      <div className="question-section">
-        <h3 className="question-text">{currentQuestion?.text}</h3>
       </div>
 
       {!showAnswers ? (
-        <div className="answers-section">
-          <h4>Select your answer:</h4>
-          <div className="answers-list">
-            {currentQuestion?.options.map((option, index) => (
-              <button
-                key={index}
-                className={`answer-option ${
-                  selectedAnswer === index ? "selected" : ""
-                } ${isAnswerLocked ? "locked" : ""}`}
-                onClick={() => handleAnswerSelect(index)}
-                disabled={isAnswerLocked}
-              >
-                {option}
-              </button>
-            ))}
-          </div>
-        </div>
+        <TriviaQuestionDisplay
+           question={currentQuestion}
+           selectedAnswer={selectedAnswer}
+           isAnswerLocked={isAnswerLocked}
+           onAnswerSelect={handleAnswerSelect}
+        />
       ) : (
-        <div className="results-section">
-          <h4>Results:</h4>
-          <div className="game-answers">
-            {gameAnswers.map((answer, index) => (
-              <div
-                key={index}
-                className={`answer-result ${
-                  answer.isCorrect ? "correct" : "incorrect"
-                }`}
-              >
-                Player {answer.userId}:{" "}
-                {answer.isCorrect ? "Correct" : "Incorrect"}
-              </div>
-            ))}
-          </div>
-
-          {player.id === gameSession.hostId && (
-            <button className="next-question-btn" onClick={handleNextQuestion}>
-              Next Question
-            </button>
-          )}
-        </div>
+        <TriviaGameResults
+           question={currentQuestion}
+           answers={gameAnswers}
+           isHost={isHost}
+           onNextQuestion={handleNextQuestion}
+        />
       )}
-
-      <style jsx>{`
-        .trivia-game {
-          max-width: 800px;
-          margin: 0 auto;
-          padding: 20px;
-          font-family: Arial, sans-serif;
-        }
-
-        .game-header {
-          text-align: center;
-          margin-bottom: 30px;
-        }
-
-        .game-header h1 {
-          color: #333;
-          margin-bottom: 20px;
-        }
-
-        .question-info {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          background: #f5f5f5;
-          padding: 15px;
-          border-radius: 8px;
-        }
-
-        .question-info h2 {
-          margin: 0;
-          color: #555;
-        }
-
-        .time-remaining {
-          font-size: 1.2em;
-          font-weight: bold;
-          color: ${timeRemaining <= 5 ? "#e74c3c" : "#27ae60"};
-        }
-
-        .question-section {
-          margin-bottom: 30px;
-        }
-
-        .question-text {
-          font-size: 1.3em;
-          line-height: 1.5;
-          color: #333;
-          text-align: center;
-          background: #fff;
-          padding: 20px;
-          border-radius: 8px;
-          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .answers-section h4,
-        .results-section h4 {
-          color: #555;
-          margin-bottom: 15px;
-        }
-
-        .answers-list {
-          display: grid;
-          gap: 10px;
-        }
-
-        .answer-option {
-          padding: 15px 20px;
-          border: 2px solid #ddd;
-          border-radius: 8px;
-          background: #fff;
-          cursor: pointer;
-          font-size: 1.1em;
-          transition: all 0.2s ease;
-          text-align: left;
-        }
-
-        .answer-option:hover:not(.locked) {
-          border-color: #3498db;
-          background: #f8f9fa;
-          transform: translateY(-2px);
-          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .answer-option.selected {
-          border-color: #3498db;
-          background: #e3f2fd;
-        }
-
-        .answer-option.locked {
-          cursor: not-allowed;
-          opacity: 0.7;
-        }
-
-        .answer-option:disabled {
-          cursor: not-allowed;
-        }
-
-        .results-section {
-          background: #f9f9f9;
-          padding: 20px;
-          border-radius: 8px;
-        }
-
-        .game-answers {
-          margin-bottom: 20px;
-        }
-
-        .answer-result {
-          padding: 10px 15px;
-          margin: 5px 0;
-          border-radius: 5px;
-          font-weight: bold;
-        }
-
-        .answer-result.correct {
-          background: #d4edda;
-          color: #155724;
-          border: 1px solid #c3e6cb;
-        }
-
-        .answer-result.incorrect {
-          background: #f8d7da;
-          color: #721c24;
-          border: 1px solid #f5c6cb;
-        }
-
-        .next-question-btn {
-          background: #28a745;
-          color: white;
-          border: none;
-          padding: 12px 24px;
-          border-radius: 5px;
-          font-size: 1.1em;
-          cursor: pointer;
-          transition: background 0.2s ease;
-        }
-
-        .next-question-btn:hover {
-          background: #218838;
-        }
-      `}</style>
     </div>
   );
 }

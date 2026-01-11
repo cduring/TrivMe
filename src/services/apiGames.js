@@ -14,3 +14,29 @@ export async function createGame(game) {
 
   return data;
 }
+
+export async function getGame(id) {
+  const { data: game, error } = await supabase
+    .from("games")
+    .select("*")
+    .eq("id", id)
+    .single();
+
+  if (error) {
+    console.error(error);
+    throw new Error(error.message || "Game could not be found!");
+  }
+
+  return game;
+}
+
+export async function getGames() {
+  const { data: games, error } = await supabase.from("games").select("*");
+
+  if (error) {
+    console.error(error);
+    throw new Error(error.message || "Games could not be found!");
+  }
+
+  return games;
+}

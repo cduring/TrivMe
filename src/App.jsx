@@ -3,11 +3,12 @@ import AppLayout from "./pages/AppLayout";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Join from "./pages/Join";
-import Game from "./pages/Game";
+import GameController from "./pages/GameController";
 import Create from "./pages/Create";
 import QuestionBuilder from "./pages/QuestionBuilder";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider } from "./contexts/AuthContext";
+import { PlayerProvider } from "./contexts/PlayerContext";
 import { Toaster } from "react-hot-toast";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
@@ -23,19 +24,21 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<AppLayout />}>
-              <Route index element={<Home />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/signup" element={<Login />} />
-              <Route path="/join" element={<Join />} />
-              <Route path="/game/:sessionId" element={<Game />} />
-              <Route path="/create" element={<Create />} />
-              <Route path="/create/:gameId" element={<QuestionBuilder />} />
-            </Route>
-          </Routes>
-        </BrowserRouter>
+        <PlayerProvider>
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<AppLayout />}>
+                <Route index element={<Home />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/signup" element={<Login />} />
+                <Route path="/join" element={<Join />} />
+                <Route path="/game/:sessionCode" element={<GameController />} />
+                <Route path="/create" element={<Create />} />
+                <Route path="/create/:gameId" element={<QuestionBuilder />} />
+              </Route>
+            </Routes>
+          </BrowserRouter>
+        </PlayerProvider>
       </AuthProvider>
       <ReactQueryDevtools />
       <Toaster

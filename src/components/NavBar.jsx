@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import {
   HiMiniHome,
   HiPuzzlePiece,
@@ -10,6 +10,15 @@ import { useAuth } from "../contexts/AuthContext";
 
 function NavBar() {
   const { isAuthenticated } = useAuth();
+  const location = useLocation();
+  const showNavBar = !location.pathname.includes("game");
+
+  if (!showNavBar)
+    return (
+      <h1 className="text-4xl font-bold text-pink-600 text-shadow-xs text-shadow-green-500 py-2">
+        Triv Me!
+      </h1>
+    );
 
   return (
     <header

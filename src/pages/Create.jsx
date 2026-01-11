@@ -3,13 +3,12 @@ import FormRow from "../components/FormRow";
 import { useCreateGame } from "../hooks/useGame";
 import { HiBolt } from "react-icons/hi2";
 import Spinner from "./Spinner";
-import { useUser } from "../hooks/useAuth";
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router";
 import { ImConfused2 } from "react-icons/im";
 
 function Create() {
-  const { register, handleSubmit, reset, getValues, formState } = useForm({
+  const { register, handleSubmit, formState } = useForm({
     defaultValues: {
       title: "",
       description: "",
@@ -25,16 +24,16 @@ function Create() {
 
   function onSubmit(data) {
     const gameData = { ...data, ownerId: user.id };
-    const game = createGame(gameData);
-    console.log(game);
+    createGame(gameData, {
+      onSuccess: (game) => {
+        const { id } = game;
+        navigate(`${id}`);
+      },
+    });
   }
 
-  function onError(errors) {
-    console.log(errors);
-  }
-
-  function handleClick() {
-    navigate("/login");
+  function onError() {
+    // console.log(errors);
   }
 
   if (!isAuthenticated) {
@@ -52,7 +51,7 @@ function Create() {
             </h3>
             <button
               className="font-semibold underline hover:text-red-500 transition-colors duration-150 ease-in-out cursor-pointer"
-              onClick={handleClick}
+              onClick={() => navigate("/login")}
             >
               Log in here.
             </button>
@@ -102,6 +101,7 @@ function Create() {
             {...register("isPrivate", {
               required: "This field is required",
             })}
+            defaultValue={false}
           >
             <option value={false}>Public</option>
             <option value={true}>Private</option>
