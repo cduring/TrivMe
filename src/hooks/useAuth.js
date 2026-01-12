@@ -3,6 +3,7 @@ import {
   getCurrentUser,
   signInUser,
   signUpUser,
+  signInUserGoogle,
   signOutUser,
 } from "../services/apiAuth";
 import { useEffect } from "react";
@@ -43,6 +44,23 @@ export function useSignIn() {
   });
 
   return { signIn, isSigningIn };
+}
+
+// Hook for google OAuth sign in
+export function useSignInGoogle() {
+  const queryClient = useQueryClient();
+
+  const { mutate: signInGoogle, isPending: isSigningInGoogle } = useMutation({
+    mutationFn: signInUserGoogle,
+    onSuccess: () => {
+      // Refetch user data after successful sign in
+      queryClient.invalidateQueries({ queryKey: USER_QUERY_KEY });
+      // toast.success("User successfully logged in!");
+    },
+    onError: (err) => toast.error(err.message),
+  });
+
+  return { signInGoogle, isSigningInGoogle };
 }
 
 // Hook for signing up

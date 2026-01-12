@@ -36,6 +36,18 @@ export async function signInUser(email, password) {
   return data;
 }
 
+export async function signInUserGoogle() {
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: "google",
+  });
+
+  if (error) {
+    throw new Error(error.message || "User could not be signed in.");
+  }
+
+  return data;
+}
+
 export async function signOutUser() {
   const { error } = await supabase.auth.signOut();
 
