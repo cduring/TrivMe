@@ -3,16 +3,18 @@ import { useForm } from "react-hook-form";
 import { useNavigate, Link } from "react-router-dom";
 import FormRow from "./FormRow";
 import { FcGoogle } from "react-icons/fc";
-import { useSignIn, useSignUp } from "../hooks/useAuth";
+import { useSignIn, useSignUp, useSignInGoogle } from "../hooks/useAuth";
 import Spinner from "../pages/Spinner";
+import toast from "react-hot-toast";
 
 function AuthForm({ mode = "login" }) {
   const isSignup = mode === "signup";
   const { signIn, isSigningIn } = useSignIn();
+  const { signInGoogle, isSigningInGoogle } = useSignInGoogle();
   const { signUp, isSigningUp } = useSignUp();
   const navigate = useNavigate();
 
-  const isSubmitting = isSigningIn || isSigningUp;
+  const isSubmitting = isSigningIn || isSigningInGoogle || isSigningUp;
 
   const {
     register,
@@ -57,6 +59,22 @@ function AuthForm({ mode = "login" }) {
       });
     }
   }
+  
+  function onOAuthSignIn(provider) {
+    switch (provider) {
+      case 'google':
+        signInGoogle({
+          onSuccess: () => {
+            reset();
+            navigate("/");
+            toast.success("User successfully logged in!");
+          },
+        });
+        break;
+      default:
+        break;
+    }
+  }
 
   function onError(formErrors) {
     console.log(formErrors);
@@ -81,9 +99,7 @@ function AuthForm({ mode = "login" }) {
           <button
             type="button"
             className="flex items-center justify-center gap-2 rounded-2xl bg-white text-gray-900 py-2.5 px-4 hover:opacity-90 active:opacity-80 transition-opacity"
-            onClick={() =>
-              console.log(isSignup ? "signup-google" : "login-google")
-            }
+            onClick={() => onOAuthSignIn("google")}
           >
             <FcGoogle size={22} />
             <span className="font-semibold">{googleCta}</span>
