@@ -1,6 +1,7 @@
-import { useParams } from "react-router";
 import WaitingRoom from "../components/WaitingRoom";
 import TriviaGame from "./TriviaGame";
+import TriviaGameEnd from "../components/TriviaGameEnd";
+import { useParams } from "react-router";
 import { useGetSession } from "../hooks/useSession";
 import { useGetGame } from "../hooks/useGame";
 import { useCreatePlayer } from "../hooks/usePlayer";
@@ -43,6 +44,8 @@ function GameController() {
     return <WaitingRoom game={game} gameSession={session} />;
   } else if (status === "active") {
     return <TriviaGame game={game} session={session} />;
+  } else if (status === "finished") {
+    return <TriviaGameEnd game={game} session={session} />;
   } else {
     return <Error message="Session state not recognized" />;
   }
