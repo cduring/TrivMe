@@ -1,15 +1,16 @@
 
 import { useNavigate } from "react-router";
 import { useGetPlayers } from "../hooks/usePlayer";
-import { useUpdateSession, useDeleteSession } from "../hooks/useSession";
+import { useDeleteSession } from "../hooks/useSession";
+import useResetSession from "../hooks/useResetSession";
 import Modal from "./Modal";
 import ConfirmAction from "./ConfirmAction";
 import Spinner from "../pages/Spinner";
 import Error from "./Error";
 
 export default function TriviaGameEnd({ game, session }) {
-  const { title } = game; // removed gameType, description as they weren't used in the design explicitly, can add back if needed
-  const { sessionCode, id: sessionId } = session;
+  const { title } = game;
+  const { id: sessionId } = session;
   const navigate = useNavigate();
 
   const {
@@ -18,10 +19,10 @@ export default function TriviaGameEnd({ game, session }) {
     error: playersError,
   } = useGetPlayers(sessionId);
 
-  const { updateSession, isUpdating } = useUpdateSession();
   const { deleteSession, isDeleting } = useDeleteSession();
+  const { resetSession, isResetting } = useResetSession(sessionId);
 
-  if (isLoadingPlayers || isUpdating) return <Spinner />;
+  if (isLoadingPlayers || isResetting) return <Spinner />;
   if (playersError) return <Error message="Error loading players" />;
 
   // Sort players by score (descending)
@@ -34,11 +35,10 @@ export default function TriviaGameEnd({ game, session }) {
 
   const isHostingId = localStorage.getItem("isHostingId");
   const isHost = isHostingId ? JSON.parse(isHostingId) === sessionId : false;
-
+  
+  
   function handlePlayAgain() {
-    // TODO: Reset player scores
-    // TODO: Delete previous answers
-    updateSession({ id: sessionId, updates: { status: "waiting" } });
+    resetSession();
   }
 
   function handleEndGame() {

@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { createAnswer as createAnswerApi, getAnswers } from "../services/apiAnswers";
+import { createAnswer as createAnswerApi, getAnswers, deleteAnswers as deleteAnswersApi } from "../services/apiAnswers";
 import supabase from "../services/supabase";
 import toast from "react-hot-toast";
 
@@ -47,4 +47,18 @@ export function useGetAnswers(sessionId) {
   }, [queryClient, sessionId]);
 
   return { answers, isLoadingAnswers, error };
+}
+
+export function useDeleteAnswers(sessionId) {
+  const queryClient = useQueryClient();
+
+  const { mutate: deleteAnswers, isPending: isDeletingAnswers } = useMutation({
+    mutationFn: () => deleteAnswersApi(sessionId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["answers", sessionId] });
+    },
+    onError: (err) => toast.error(err.message),
+  });
+
+  return { deleteAnswers, isDeletingAnswers };
 }

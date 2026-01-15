@@ -44,3 +44,36 @@ export async function deletePlayer(playerId) {
     throw new Error("Player could not be deleted!");
   }
 }
+
+export async function updatePlayer(id, updates) {
+  const { data, error } = await supabase
+    .from("gamePlayers")
+    .update(updates)
+    .eq("id", id)
+    .select()
+    .single();
+
+  if (error) {
+    console.error(error);
+    throw new Error("Player could not be updated");
+  }
+
+  return data;
+}
+
+export async function updatePlayers(sessionId, updates) {
+  console.log(updates);
+
+  const { data, error } = await supabase
+    .from("gamePlayers")
+    .update(updates)
+    .eq("sessionId", sessionId)
+    .select();
+
+  if (error) {
+    console.error(error);
+    throw new Error("Players could not be updated");
+  }
+
+  return data;
+}

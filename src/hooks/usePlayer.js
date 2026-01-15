@@ -4,6 +4,8 @@ import {
   getPlayers,
   createPlayer as createPlayerApi,
   deletePlayer as deletePlayerApi,
+  updatePlayer as updatePlayerApi,
+  updatePlayers as updatePlayersApi,
 } from "../services/apiPlayers";
 import { usePlayerContext } from "../contexts/PlayerContext";
 import supabase from "../services/supabase";
@@ -82,5 +84,33 @@ export function useDeletePlayer(sessionId) {
   });
 
   return { isDeletingPlayer, deletePlayer };
+}
+
+export function useUpdatePlayer(sessionId) {
+  const queryClient = useQueryClient();
+
+  const { mutate: updatePlayer, isPending: isUpdating } = useMutation({
+    mutationFn: ({ id, updates }) => updatePlayerApi(id, updates),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["players", sessionId] });
+    },
+    onError: (err) => toast.error(err.message),
+  });
+
+  return { isUpdating, updatePlayer };
+}
+
+export function useUpdatePlayers(sessionId) {
+  const queryClient = useQueryClient();
+
+  const { mutate:updatePlayers, isPending: isUpdating } = useMutation({
+    mutationFn: (updates) => updatePlayersApi(sessionId, updates),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["players", sessionId] });
+    },
+    onError: (err) => toast.error(err.message),
+  });
+
+  return { isUpdating, updatePlayers };
 }
 

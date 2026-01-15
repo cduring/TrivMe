@@ -8,6 +8,7 @@ import Error from "../components/Error";
 import TriviaGameTimer from "../components/TriviaGameTimer";
 import TriviaQuestionDisplay from "../components/TriviaQuestionDisplay";
 import TriviaGameResults from "../components/TriviaGameResults";
+import { useUpdatePlayer, useGetPlayers } from "../hooks/usePlayer";
 
 export default function TriviaGame({ game, session }) {
   const { currentPlayer } = usePlayerContext();
@@ -15,6 +16,8 @@ export default function TriviaGame({ game, session }) {
   const { updateSession } = useUpdateSession();
   const { createAnswer } = useCreateAnswer();
   const { answers: gameAnswers, isLoadingAnswers } = useGetAnswers(session.id);
+  const { updatePlayer } = useUpdatePlayer(session.id);
+  const { players } = useGetPlayers(session.id);
   
   const [timeRemaining, setTimeRemaining] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState(null);
@@ -24,6 +27,7 @@ export default function TriviaGame({ game, session }) {
   const currentQuestionId = session.currentQuestionId;
   const currentQuestion = currentQuestionId ? questions?.find((q) => q.id === currentQuestionId) : null;
   const questionIndex = currentQuestionId ? questions?.findIndex((q) => q.id === currentQuestionId) : null;
+  const isLastQuestion = questions ? questionIndex === questions.length - 1 : false;
 
 
   const isHostingId = localStorage.getItem("isHostingId");
@@ -103,6 +107,10 @@ export default function TriviaGame({ game, session }) {
           nickname: currentPlayer.nickname,
           // got rid of answer index field for now
         });
+        if (isCorrect) {
+          const updates = {score: currentPlayer.score + currentQuestion.points};
+          updatePlayer({id: currentPlayer.id, updates});
+        }
       }
     }
   };
@@ -127,9 +135,6 @@ export default function TriviaGame({ game, session }) {
       </div>
     );
   }
-
-  // Filter answers for current question
-  const currentQuestionAnswers = gameAnswers?.filter(a => a.questionId === currentQuestion.id) || [];
 
   return (
     <div className="max-w-[800px] mx-auto p-5 font-sans">
@@ -156,6 +161,8 @@ export default function TriviaGame({ game, session }) {
            answers={gameAnswers}
            isHost={isHost}
            onNextQuestion={handleNextQuestion}
+           players={players}
+           isLastQuestion={isLastQuestion}
         />
       )}
     </div>
