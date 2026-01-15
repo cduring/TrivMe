@@ -7,12 +7,15 @@ import {
 } from "../services/apiQuestions";
 import toast from "react-hot-toast";
 
-export function useCreateQuestions() {
+export function useCreateQuestions(gameId) {
+  const queryClient = useQueryClient();
+
   const { mutate: createQuestions, isPending: isCreatingQuestions } =
     useMutation({
       mutationFn: createQuestionsApi,
       onSuccess: () => {
         toast.success("Questions successfully created!");
+        queryClient.invalidateQueries({ queryKey: ["questions", gameId] });
       },
       onError: (err) => toast.error(err.message),
     });

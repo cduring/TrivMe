@@ -30,7 +30,7 @@ export default function QuestionBuilder() {
   const { gameId } = useParams();
   const { user, isAuthenticated, isLoading: isLoadingUser } = useAuth();
   const { game, isLoadingGame, error } = useGetGame(gameId);
-  const { createQuestions, isCreatingQuestions } = useCreateQuestions();
+  const { createQuestions, isCreatingQuestions } = useCreateQuestions(gameId);
   const { startGame, isStartingGame } = useStartGame(gameId);
   const [questions, setQuestions] = useState(defaultQuestions);
   const navigate = useNavigate();

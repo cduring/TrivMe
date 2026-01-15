@@ -28,3 +28,17 @@ export async function getAnswers(sessionId) {
 
   return data;
 }
+
+export async function deleteAnswers(sessionId) {
+  const { data, error } = await supabase
+    .from("gameAnswers")
+    .delete()
+    .eq("sessionId", sessionId);
+
+  if (error) {
+    console.error(error);
+    throw new Error(error.message || "Answers could not be deleted!");
+  }
+
+  return data;
+}

@@ -38,15 +38,11 @@ export async function getSession(sessionCode) {
 }
 
 export async function updateSession(id, updates) {
-  console.log(id);
-  console.log(updates);
-
   const { data, error } = await supabase
     .from("gameSessions")
     .update(updates)
     .eq("id", id)
     .select();
-    // .single();
 
   if (error) {
     console.error(error);
