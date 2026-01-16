@@ -62,7 +62,6 @@ export async function updatePlayer(id, updates) {
 }
 
 export async function updatePlayers(sessionId, updates) {
-  console.log(updates);
 
   const { data, error } = await supabase
     .from("gamePlayers")

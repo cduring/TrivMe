@@ -73,8 +73,6 @@ export function useDeletePlayer(sessionId) {
   const { mutate: deletePlayer, isPending: isDeletingPlayer } = useMutation({
     mutationFn: (id) => deletePlayerApi(id),
     onSuccess: () => {
-      toast.success("You are now spectating!");
-      
       // Clear from context and cache
       clearPlayer();
       queryClient.setQueryData(["currentPlayer"], null);
@@ -88,10 +86,13 @@ export function useDeletePlayer(sessionId) {
 
 export function useUpdatePlayer(sessionId) {
   const queryClient = useQueryClient();
+  const { setCurrentPlayer } = usePlayerContext();
 
   const { mutate: updatePlayer, isPending: isUpdating } = useMutation({
     mutationFn: ({ id, updates }) => updatePlayerApi(id, updates),
-    onSuccess: () => {
+    onSuccess: (player) => {
+      queryClient.setQueryData(["currentPlayer"], player);
+      setCurrentPlayer(player);
       queryClient.invalidateQueries({ queryKey: ["players", sessionId] });
     },
     onError: (err) => toast.error(err.message),
