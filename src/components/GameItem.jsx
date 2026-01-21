@@ -7,7 +7,7 @@ import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router";
 
 export default function GameItem({ game }) {
-  const { startGame, isStartingGame } = useStartGame(game.id);
+  const { startGame, isStartingGame } = useStartGame();
   const { user, isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
@@ -50,7 +50,7 @@ export default function GameItem({ game }) {
         <ConfirmAction
           message="Would like like to start a new TrivMe?"
           disabled={isStartingGame}
-          onAction={startGame}
+          onAction={() => startGame(gameId)}
         />
       </Modal.Window>
     </Modal>

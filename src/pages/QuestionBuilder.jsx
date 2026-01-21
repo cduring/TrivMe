@@ -31,7 +31,7 @@ export default function QuestionBuilder() {
   const { user, isAuthenticated, isLoading: isLoadingUser } = useAuth();
   const { game, isLoadingGame, error } = useGetGame(gameId);
   const { createQuestions, isCreatingQuestions } = useCreateQuestions(gameId);
-  const { startGame, isStartingGame } = useStartGame(gameId);
+  const { startGame, isStartingGame } = useStartGame();
   const [questions, setQuestions] = useState(defaultQuestions);
   const navigate = useNavigate();
 
@@ -69,6 +69,7 @@ export default function QuestionBuilder() {
 
     const questionsToSubmit = questions.map((q) => ({ ...q, gameId, user_id: user.id }));
     createQuestions(questionsToSubmit);
+    setQuestions(defaultQuestions);
   }
 
   if (!isAuthenticated) {
@@ -116,7 +117,7 @@ export default function QuestionBuilder() {
             <ConfirmAction
               message="Ready to start this game?"
               disabled={isStartingGame}
-              onAction={startGame}
+              onAction={() => startGame(gameId)}
               confirmLabel="Let's Play!"
             />
           </Modal.Window>

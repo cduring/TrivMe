@@ -1,4 +1,5 @@
 import supabase from "./supabase";
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 export async function createGame(game) {
   const { data, error } = await supabase
@@ -39,4 +40,21 @@ export async function getGames() {
   }
 
   return games;
+}
+
+export async function generateGame(prompt) {
+  console.log(backendUrl);
+  const res = await fetch(`${backendUrl}/generate`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ text: prompt }),
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to generate game");
+  }
+
+  return await res.json();
 }
