@@ -1,10 +1,24 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   createGame as createGameApi,
+  generateGame as generateGameApi,
   getGame,
   getGames,
 } from "../services/apiGames";
 import toast from "react-hot-toast";
+
+export function useGenerateGame() {
+  const {
+    mutate: generateGame,
+    data: game,
+    isPending: isGenerating,
+  } = useMutation({
+    mutationFn: generateGameApi,
+    onError: (err) => toast.error(err.message),
+  });
+
+  return { generateGame, game, isLoading: isGenerating };
+}
 
 export function useCreateGame() {
   const queryClient = useQueryClient();

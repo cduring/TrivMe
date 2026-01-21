@@ -6,6 +6,7 @@ import Spinner from "./Spinner";
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router";
 import { ImConfused2 } from "react-icons/im";
+import GenerateGame from "./GenerateGame";
 
 function Create() {
   const { register, handleSubmit, formState } = useForm({
@@ -114,6 +115,7 @@ function Create() {
           <HiBolt /> Create
         </button>
       </form>
+      <GenerateGame />
     </>
   );
 }

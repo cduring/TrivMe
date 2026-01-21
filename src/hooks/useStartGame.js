@@ -1,11 +1,11 @@
 import { useCreateSession } from "./useSession";
 import { useNavigate } from "react-router";
 
-export function useStartGame(gameId) {
+export function useStartGame() {
   const { createSession, isCreating: isStartingGame } = useCreateSession();
   const navigate = useNavigate();
 
-  function startGame() {
+  function startGame(gameId) {
     const onSuccessFn = (session) => {
       localStorage.setItem("isHostingId", JSON.stringify(session.id));
       const { sessionCode: code } = session;
