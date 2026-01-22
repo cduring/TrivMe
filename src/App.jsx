@@ -4,7 +4,7 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Join from "./pages/Join";
 import GameController from "./pages/GameController";
-import Create from "./pages/Create";
+import CreateController from "./pages/CreateController";
 import QuestionBuilder from "./pages/QuestionBuilder";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider } from "./contexts/AuthContext";
@@ -33,7 +33,7 @@ function App() {
                 <Route path="/signup" element={<Login />} />
                 <Route path="/join" element={<Join />} />
                 <Route path="/game/:sessionCode" element={<GameController />} />
-                <Route path="/create" element={<Create />} />
+                <Route path="/create" element={<CreateController />} />
                 <Route path="/create/:gameId" element={<QuestionBuilder />} />
               </Route>
             </Routes>
