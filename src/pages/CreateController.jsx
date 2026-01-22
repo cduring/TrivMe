@@ -9,14 +9,14 @@ function CreateController() {
   return (
     <div className="flex flex-col items-center w-full max-w-4xl mx-auto py-8 px-4 gap-8">
       {/* Title */}
-      <h1 className="text-3xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-pink-400 text-center animate-pulse">
+      <h1 className="text-3xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-pink-400 text-center animate-pulse title-text">
         {mode === "generate"
           ? "Generate your own Game with AI"
           : "Build your own Trivia Game"}
       </h1>
 
       {/* Toggle Switch */}
-      <div className="flex bg-purple-900/50 p-1 rounded-full border border-purple-700/50 shadow-inner">
+      <div className="flex bg-purple-900/50 p-1 rounded-full border border-purple-700/50 shadow-inner title-text">
         <button
           onClick={() => setMode("generate")}
           className={`
