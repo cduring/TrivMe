@@ -1,10 +1,43 @@
 import { useState } from "react";
+import { useAuth } from "../contexts/AuthContext";
 import GenerateGame from "./GenerateGame";
 import Create from "./Create";
 import { HiSparkles, HiPencilSquare } from "react-icons/hi2";
+import Spinner from "./Spinner";
+import { useNavigate } from "react-router-dom";
+import { ImConfused2 } from "react-icons/im";
 
 function CreateController() {
+  const navigate = useNavigate();
   const [mode, setMode] = useState("generate"); // "generate" or "create"
+  const { user, isLoading: isLoadingUser, isAuthenticated } = useAuth();
+
+  if (isLoadingUser) return <Spinner />;
+
+  if (!isAuthenticated) {
+    return (
+      <>
+        {isLoadingUser && <Spinner />}
+        <div className="h-[400px] flex flex-col font-normal justify-center items-center px-4 gap-10">
+          <ImConfused2 size={200} />
+          <div className="flex flex-col md:flex-row text-3xl gap-2">
+            <h3 className="text-center">
+              Sorry, you need to be{" "}
+              <strong className="text-red-400">logged in</strong> to create a
+              new TrivMe!
+              <br />
+            </h3>
+            <button
+              className="font-semibold underline hover:text-red-500 transition-colors duration-150 ease-in-out cursor-pointer"
+              onClick={() => navigate("/login")}
+            >
+              Log in here.
+            </button>
+          </div>
+        </div>
+      </>
+    );
+  }
 
   return (
     <div className="flex flex-col items-center w-full max-w-4xl mx-auto py-8 px-4 gap-8">
