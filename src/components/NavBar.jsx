@@ -23,7 +23,7 @@ function NavBar() {
   return (
     <header
       className="my-6 flex w-4/5 md:w-1/2 items-center px-4 py-2 justify-between md:justify-around rounded-full bg-purple-800 text-sm md:text-lg font-bold
-     text-purple-50 uppercase title-text"
+     text-purple-50 uppercase"
     >
       <NavLink to="/create">
         <span className="flex items-center gap-1">
