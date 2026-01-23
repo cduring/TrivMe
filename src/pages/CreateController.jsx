@@ -10,7 +10,7 @@ import { ImConfused2 } from "react-icons/im";
 function CreateController() {
   const navigate = useNavigate();
   const [mode, setMode] = useState("generate"); // "generate" or "create"
-  const { user, isLoading: isLoadingUser, isAuthenticated } = useAuth();
+  const { isLoading: isLoadingUser, isAuthenticated } = useAuth();
 
   if (isLoadingUser) return <Spinner />;
 

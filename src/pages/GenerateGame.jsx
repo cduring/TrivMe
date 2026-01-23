@@ -56,10 +56,10 @@ function GenerateGame() {
   const isLoading = isGenerating || isCreating || isCreatingQuestions;
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[80vh] px-4">
+    <div className="flex flex-col items-center justify-center py-8 px-4">
       <div className="max-w-2xl w-full text-center space-y-8">
         <h1 className="text-4xl font-bold text-violet-900 mb-2">
-          Generate a Trivia Game with AI
+          Generate a new TrivMe with AI
         </h1>
         <p className="text-stone-600 text-lg mb-8">
           Describe the quiz you want, and let our AI build it for you in seconds.

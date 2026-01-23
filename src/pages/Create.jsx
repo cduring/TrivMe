@@ -1,11 +1,9 @@
 import { useForm } from "react-hook-form";
-import FormRow from "../components/FormRow";
 import { useCreateGame } from "../hooks/useGame";
 import { HiBolt } from "react-icons/hi2";
 import Spinner from "./Spinner";
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router";
-import { ImConfused2 } from "react-icons/im";
 
 function Create() {
   const { register, handleSubmit, formState } = useForm({
@@ -17,7 +15,7 @@ function Create() {
     },
   });
   const { isCreating, createGame } = useCreateGame();
-  const { user, isLoading: isLoadingUser, isAuthenticated } = useAuth();
+  const { user, isLoading: isLoadingUser } = useAuth();
   const navigate = useNavigate();
 
   const { errors } = formState;
@@ -37,59 +35,98 @@ function Create() {
   }
 
   return (
-    <>
+    <div className="flex flex-col items-center justify-center py-4 px-4 w-full">
       {(isCreating || isLoadingUser) && <Spinner />}
-      <form
-        onSubmit={handleSubmit(onSubmit, onError)}
-        className="flex flex-col items-center w-full bg-purple-800 border-4 rounded-2xl px-4 py-2 gap-3"
-      >
-        <h1 className="font-bold text-2xl">Create TrivMe</h1>
-        <FormRow label="Title" error={errors?.title?.message}>
-          <input
-            className="bg-purple-600 rounded-2xl w-full md:w-3/5 px-2 py-1 text-center"
-            {...register("title", {
-              required: "This field is required",
-            })}
-          />
-        </FormRow>
-        <FormRow label="Description" error={errors?.description?.message}>
-          <textarea
-            className="bg-purple-600 rounded-2xl w-full md:w-3/5 px-2 py-1 h-30"
-            {...register("description", {
-              required: "This field is required",
-            })}
-          />
-        </FormRow>
-        <FormRow label="Game Type" error={errors?.gameType?.message}>
-          <select
-            className="bg-purple-600 rounded-2xl w-4/5 md:w-2/5 text-center px-2 py-1"
-            {...register("gameType", {
-              required: "This field is required",
-            })}
-          >
-            <option value="Trivia">Trivia</option>
-          </select>
-        </FormRow>
-        <FormRow label="Game Privacy" error={errors?.isPrivate?.message}>
-          <select
-            className="bg-purple-600 rounded-2xl w-4/5 md:w-2/5 text-center px-2 py-1"
-            {...register("isPrivate", {
-              required: "This field is required",
-            })}
-            defaultValue={false}
-          >
-            <option value={false}>Public</option>
-            <option value={true}>Private</option>
-          </select>
-        </FormRow>
-        <button
-          disabled={isCreating}
-          className="uppercase bg-purple-600 rounded-xl px-4 py-2 mt-8 hover:bg-green-600 hover:text-green-100 hover:-translate-y-[2px] transition-all duration-300 ease-in-out flex items-center gap-0.5"
+      <div className="max-w-2xl w-full space-y-4">
+        <form
+          onSubmit={handleSubmit(onSubmit, onError)}
+          className="w-full bg-pink-100/80 backdrop-blur-sm p-8 rounded-3xl shadow-xl shadow-pink-200 border border-pink-200 space-y-6"
         >
-          <HiBolt /> Create
-        </button>
-      </form>
-    </>
+          <div className="space-y-4">
+            <div className="flex flex-col gap-2">
+              <label className="font-semibold text-pink-50 ml-1">Title</label>
+              <input
+                className="w-full p-4 rounded-xl border-2 border-pink-400 bg-pink-500/50 text-white placeholder:text-pink-200 focus:border-white focus:ring-4 focus:ring-pink-400/30 transition-all duration-300 text-lg outline-none placeholder:text-stone-300"
+                placeholder="e.g. The Ultimate 90s Quiz"
+                {...register("title", {
+                  required: "Title is required",
+                })}
+              />
+              {errors?.title?.message && (
+                <span className="text-red-500 text-sm ml-1">{errors.title.message}</span>
+              )}
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <label className="font-semibold text-pink-50 ml-1">Description</label>
+              <textarea
+                className="w-full p-4 rounded-xl border-2 border-pink-400 bg-pink-500/50 text-white placeholder:text-pink-200 focus:border-white focus:ring-4 focus:ring-pink-400/30 transition-all duration-300 text-lg outline-none min-h-[120px] resize-none"
+                placeholder="What is this quiz about?"
+                {...register("description", {
+                  required: "Description is required",
+                })}
+              />
+              {errors?.description?.message && (
+                <span className="text-red-500 text-sm ml-1">{errors.description.message}</span>
+              )}
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="flex flex-col gap-2">
+                <label className="font-semibold text-pink-50 ml-1">Game Type</label>
+                <div className="relative">
+                  <select
+                    className="w-full p-4 rounded-xl border-2 border-pink-400 bg-pink-500/50 text-white focus:border-white focus:ring-4 focus:ring-pink-400/30 transition-all duration-300 text-lg outline-none appearance-none"
+                    {...register("gameType", { required: "Required" })}
+                    defaultValue={"Trivia"}
+                    disabled={true}
+                  >
+                    <option value="Trivia" className="text-stone-800">Trivia</option>
+                  </select>
+                  <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-pink-200">
+                    ▼
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <label className="font-semibold text-pink-50 ml-1">Privacy</label>
+                <div className="relative">
+                  <select
+                    className="w-full p-4 rounded-xl border-2 border-pink-400 bg-pink-500/50 text-white focus:border-white focus:ring-4 focus:ring-pink-400/30 transition-all duration-300 text-lg outline-none appearance-none"
+                    {...register("isPrivate", { required: "Required" })}
+                    defaultValue={false}
+                  >
+                    <option value={false} className="text-stone-800">Public</option>
+                    <option value={true} className="text-stone-800">Private</option>
+                  </select>
+                  <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-pink-200">
+                    ▼
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <button
+            disabled={isCreating}
+            className="w-full py-4 px-8 bg-white hover:bg-pink-50 disabled:bg-pink-200 text-pink-700 font-bold rounded-xl transition-all duration-300 transform hover:scale-[1.02] flex items-center justify-center gap-2 text-xl shadow-lg shadow-pink-900/20 mt-8 cursor-pointer"
+          >
+            {isCreating ? (
+              <span className="flex items-center gap-2">
+                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                 Creating...
+              </span>
+            ) : (
+              <>
+                <HiBolt className="w-6 h-6" />
+                Create Game
+              </>
+            )}
+          </button>
+        </form>
+      </div>
+    </div>
   );
 }
 
