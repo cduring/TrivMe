@@ -2,8 +2,9 @@ import { useLocation } from "react-router-dom";
 import AuthForm from "../components/AuthForm";
 import { useAuth } from "../contexts/AuthContext";
 import { useSignOut } from "../hooks/useAuth";
-import { Navigate } from "react-router-dom";
 import Spinner from "./Spinner";
+import { ImSleepy } from "react-icons/im";
+
 
 function Login() {
   const location = useLocation();
@@ -19,9 +20,10 @@ function Login() {
 
   if (isAuthenticated)
     return (
-      <>
+      <div className="h-[400px] flex flex-col font-normal justify-center items-center px-4 gap-15">
         {isSigningOut && <Spinner />}
-        <div className="h-[400px] flex flex-col md:flex-row text-3xl font-normal justify-center items-center px-4">
+        <ImSleepy size={200} />
+        <div className="flex flex-col md:flex-row text-3xl font-normal justify-center items-center px-4">
           <h3>You are already logged in, &nbsp;</h3>
           <button
             className="font-semibold underline hover:text-red-500 transition-colors duration-150 ease-in-out cursor-pointer"
@@ -31,7 +33,7 @@ function Login() {
             click here to logout.
           </button>
         </div>
-      </>
+      </div>
     );
 
   return <AuthForm mode={isSignup ? "signup" : "login"} />;

@@ -74,7 +74,13 @@ export function useSignUp() {
       queryClient.invalidateQueries({ queryKey: USER_QUERY_KEY });
       toast.success("User successfully signed up!");
     },
-    onError: (err) => toast.error(err.message),
+    onError: (err) => {
+      if (err.message.includes("should contain at least one character")) {
+        toast.error("Password should contain at least one lowercase and uppercase character, one number, and one symbol.");
+      } else {
+        toast.error(err.message)
+      }
+    },
   });
 
   return { signUp, isSigningUp };

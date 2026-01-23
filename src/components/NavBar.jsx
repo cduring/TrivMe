@@ -22,28 +22,55 @@ function NavBar() {
 
   return (
     <header
-      className="my-6 flex w-4/5 md:w-1/2 items-center px-4 py-2 justify-between md:justify-around rounded-full bg-purple-800 text-sm md:text-lg font-bold
-     text-purple-50 uppercase"
+      className="my-6 flex w-4/5 md:w-1/2 items-center px-4 py-2 justify-between md:justify-around rounded-full bg-purple-800 text-sm md:text-lg font-bold uppercase"
     >
-      <NavLink to="/create">
+      <NavLink
+        to="/create"
+        className={({ isActive }) =>
+          `transition-all duration-300 hover:scale-105 ${
+            isActive ? "text-pink-400 scale-110" : "text-purple-50 hover:text-purple-200"
+          }`
+        }
+      >
         <span className="flex items-center gap-1">
           <HiMiniLightBulb />
           New
         </span>
       </NavLink>
-      <NavLink to="/">
+      <NavLink
+        to="/"
+        className={({ isActive }) =>
+          `transition-all duration-300 hover:scale-105 ${
+            isActive ? "text-pink-400 scale-110" : "text-purple-50 hover:text-purple-200"
+          }`
+        }
+      >
         <span className="flex items-center gap-1">
           <HiMiniHome />
           Home
         </span>
       </NavLink>
-      <NavLink to="/join">
+      <NavLink
+        to="/join"
+        className={({ isActive }) =>
+          `transition-all duration-300 hover:scale-105 ${
+            isActive ? "text-pink-400 scale-110" : "text-purple-50 hover:text-purple-200"
+          }`
+        }
+      >
         <span className="flex items-center gap-1">
           <HiPuzzlePiece />
           Join
         </span>
       </NavLink>
-      <NavLink to="/login">
+      <NavLink
+        to="/login"
+        className={({ isActive }) =>
+          `transition-all duration-300 hover:scale-105 ${
+            isActive ? "text-pink-400 scale-110" : "text-purple-50 hover:text-purple-200"
+          }`
+        }
+      >
         {isAuthenticated ? (
           <span className="flex items-center gap-1">
             <HiMiniArrowRightStartOnRectangle />

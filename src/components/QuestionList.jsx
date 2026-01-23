@@ -10,7 +10,7 @@ export default function QuestionList({ gameId }) {
   if (!questions?.length) return null;
 
   return (
-    <section className="flex flex-col items-center w-full bg-purple-900/50 border-2 border-purple-500 rounded-2xl px-4 py-4 gap-4">
+    <section className="flex flex-col items-center w-full bg-purple-900/50 border-2 border-purple-500 rounded-2xl px-4 py-4 gap-4 transform transition-all duration-300 hover:scale-[1.01]">
       <h2 className="font-bold text-lg md:text-xl uppercase text-center text-purple-200">
         Existing Questions
       </h2>

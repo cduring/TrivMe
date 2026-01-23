@@ -194,7 +194,6 @@ function AuthForm({ mode = "login" }) {
             </>
           )}
         </div>
-        <button onClick={() => reset()}>Click to reset</button>
       </div>
     </>
   );
