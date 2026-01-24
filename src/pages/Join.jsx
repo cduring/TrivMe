@@ -1,44 +1,39 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useGetSession } from "../hooks/useSession";
 import Spinner from "./Spinner";
 import toast from "react-hot-toast";
+import { getSession } from "../services/apiSession";
 
 function Join() {
   const [sessionCode, setSessionCode] = useState("");
-  const [searchCode, setSearchCode] = useState(""); 
+  const [isSearching, setIsSearching] = useState(false);
   const navigate = useNavigate();
-  
-  // Only query when searchCode is set
-  const { isLoadingSession, session, error } = useGetSession(searchCode);
 
-  function handleJoin() {
+  async function handleJoin() {
     if (!sessionCode) return;
     if (sessionCode.length !== 6) {
       toast.error("Session code must be 6 characters");
       return;
     }
-    setSearchCode(sessionCode);
+    setIsSearching(true);
+    try {
+      const session = await getSession(sessionCode);
+      if (!session) {
+        toast.error("Session not found");
+        setIsSearching(false);
+        return;
+      }
+    } catch (error) {
+      toast.error("Session not found");
+      setIsSearching(false);
+      return;
+    }
+    navigate(`/game/${sessionCode}`);
   }
-
-  useEffect(() => {
-    if (searchCode && session) {
-      // Valid session found
-      navigate(`/game/${session.sessionCode}`);
-      setSearchCode(""); // Reset to avoid re-triggering
-    }
-
-    if (searchCode && error) {
-      // Invalid session
-      toast.error("Invalid session code. Please try again.");
-      setSearchCode(""); // Reset search
-      setSessionCode(""); // Clear input
-    }
-  }, [session, error, searchCode, navigate]);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[60vh] px-4">
-      {isLoadingSession && !!searchCode && <Spinner />}
+      {isSearching && <Spinner />}
       <div className="w-full max-w-md bg-violet-600/90 backdrop-blur-sm p-10 rounded-3xl shadow-2xl shadow-violet-900/50 border border-violet-400 text-center space-y-8 transform transition-all hover:scale-[1.01]">
         <div className="space-y-2">
           <h1 className="text-4xl font-extrabold text-white tracking-tight">
@@ -62,10 +57,10 @@ function Join() {
 
           <button
             onClick={handleJoin}
-            disabled={!sessionCode || isLoadingSession}
+            disabled={isSearching}
             className="w-full py-4 px-8 bg-green-800 hover:bg-green-400 disabled:bg-green-950 disabled:text-green-300 text-white font-bold rounded-xl transition-all duration-300 transform hover:scale-[1.02] active:scale-95 shadow-lg shadow-green-500/30 text-xl flex items-center justify-center gap-3"
           >
-            {isLoadingSession ? "Checking..." : "Enter Lobby 🚀"}
+            {isSearching ? "Checking..." : "Enter Lobby 🚀"}
           </button>
         </div>
       </div>
