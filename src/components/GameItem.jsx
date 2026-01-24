@@ -11,8 +11,8 @@ export default function GameItem({ game }) {
   const { user, isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
-  const { id: gameId, title, gameType, description, ownerId } = game;
-  const isOwned = isAuthenticated && ownerId === user.id;
+  const { id: gameId, title, category, description, ownerId } = game;
+  const isOwned = isAuthenticated && ownerId === user?.id;
 
   function handleEdit() {
     navigate(`/create/${gameId}`);
@@ -20,17 +20,17 @@ export default function GameItem({ game }) {
 
   return (
     <Modal>
-      <div className="w-full flex justify-between items-start border-2 rounded-2xl px-3 py-2 transition-transform duration-200 ease-in-out hover:-translate-y-[3px] min-h-[120px]">
-        <div className="flex-1 min-w-0 pr-3 items-center justify-center">
-          <ul className="space-y-1 items-center justify-center">
-            <li className="font-bold text-lg truncate">{title}</li>
-            <li className="text-sm text-gray-300">{gameType}</li>
-            <li className="italic text-pink-300 text-sm break-words">
+      <div className="max-w-[100%] flex border-2 rounded-2xl px-3 py-2 transition-transform duration-200 ease-in-out hover:-translate-y-[3px] min-h-[120px]">
+        <div className="flex-1 items-center justify-center w-[60%] border-dashed border-1">
+          <ul className="space-y-1 items-center justify-center w-[100%]">
+            <li className="font-bold text-lg truncate max-w-[80%]">{title}</li>
+            <li className="text-sm text-gray-300">{category}</li>
+            <li className="italic text-pink-300 text-sm break-words max-w-[65%]">
               {formatDesc(description, 60)}
             </li>
           </ul>
         </div>
-        <div className="flex flex-col items-center justify-center gap-2 flex-shrink-0 h-full">
+        <div className="flex flex-col items-center justify-center gap-2 flex-shrink-0 h-full border-dashed border-1">
           <span className="*:fill-purple-100 *:text-5xl">
             <HiOutlinePuzzlePiece />
           </span>

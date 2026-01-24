@@ -1,7 +1,8 @@
 
 import { useNavigate } from "react-router";
-import { useGetPlayers } from "../hooks/usePlayer";
+import { useGetPlayers, useDeletePlayer } from "../hooks/usePlayer";
 import { useDeleteSession } from "../hooks/useSession";
+import { usePlayerContext } from "../contexts/PlayerContext";
 import useResetSession from "../hooks/useResetSession";
 import Modal from "./Modal";
 import ConfirmAction from "./ConfirmAction";
@@ -21,6 +22,8 @@ export default function TriviaGameEnd({ game, session }) {
 
   const { deleteSession, isDeleting } = useDeleteSession();
   const { resetSession, isResetting } = useResetSession(sessionId);
+  const { currentPlayer } = usePlayerContext();
+  const { deletePlayer, isDeletingPlayer } = useDeletePlayer(sessionId);
 
   if (isLoadingPlayers || isResetting) return <Spinner />;
   if (playersError) return <Error message="Error loading players" />;
@@ -50,9 +53,15 @@ export default function TriviaGameEnd({ game, session }) {
   }
 
   function handleLeaveGame() {
-    // TODO: Implement leave game logic for players
-    // For now, maybe just navigate home? User said "okay if this button does not do anything"
-    // navigate("/"); 
+    if (currentPlayer?.id) {
+      deletePlayer(currentPlayer.id, {
+        onSuccess: () => {
+          navigate("/");
+        },
+      });
+    } else {
+      navigate("/");
+    }
   }
 
   return (
@@ -153,12 +162,13 @@ export default function TriviaGameEnd({ game, session }) {
               </Modal.Open>
             </>
           ) : (
-            <button
-               onClick={handleLeaveGame}
-               className="w-full py-4 bg-gray-700 text-gray-300 rounded-xl font-bold text-xl hover:bg-gray-600 transition-all duration-200 uppercase tracking-wide cursor-not-allowed opacity-75"
-            >
-              Leave Game (Coming Soon)
-            </button>
+            <Modal.Open opens="leave-game">
+              <button
+                 className="w-full py-4 bg-red-600/80 text-white rounded-xl font-bold text-xl hover:bg-red-700 transition-all duration-200 uppercase tracking-wide border border-red-500 hover:border-red-400"
+              >
+                Leave Game
+              </button>
+            </Modal.Open>
           )}
         </div>
 
@@ -168,6 +178,13 @@ export default function TriviaGameEnd({ game, session }) {
             message="Are you sure you want to completely end this game session for everyone?"
             disabled={isDeleting}
             onAction={handleEndGame}
+          />
+        </Modal.Window>
+        <Modal.Window name="leave-game">
+          <ConfirmAction
+            message="Are you sure you want to leave this game?"
+            disabled={isDeletingPlayer}
+            onAction={handleLeaveGame}
           />
         </Modal.Window>
       </div>

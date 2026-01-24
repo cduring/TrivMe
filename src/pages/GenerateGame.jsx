@@ -6,6 +6,7 @@ import { useStartGame } from "../hooks/useStartGame";
 import { useAuth } from "../contexts/AuthContext";
 import Modal, { ModalContext } from "../components/Modal";
 import { HiSparkles } from "react-icons/hi2";
+import { formatDesc } from "../utils/stringHelpers";
 
 function GenerateGame() {
   const [prompt, setPrompt] = useState("");
@@ -16,19 +17,28 @@ function GenerateGame() {
   const { user } = useAuth();
   const [generatedGame, setGeneratedGame] = useState(null);
   const [showPreview, setShowPreview] = useState(false);
+  const [isPrivate, setIsPrivate] = useState(false);
+  const [numQuestions, setNumQuestions] = useState(10);
+
+  useEffect(function () {
+    setShowPreview(false);
+  }, [prompt])
 
   const handleGenerate = (e) => {
     e.preventDefault();
     if (!prompt) return;
 
-    generateGame(prompt, {
+    const finalPrompt = `${prompt} with ${numQuestions || 5} questions`;
+
+    generateGame(finalPrompt, {
       onSuccess: (data) => {
         const newGame = {
           title: data.title,
           description: data.description,
+          category: data.category,
           ownerId: user?.id,
           gameType: "Trivia",
-          isPrivate: false,
+          isPrivate
         };
         
         createGame(newGame, {
@@ -73,7 +83,6 @@ function GenerateGame() {
             className="w-full h-40 p-6 rounded-2xl border-2 border-violet-100 focus:border-violet-500 focus:ring-4 focus:ring-violet-100 transition-all duration-300 text-lg resize-none shadow-sm placeholder:text-stone-400"
             disabled={isLoading}
           />
-          
           <button
             type="button"
             onClick={handleGenerate}
@@ -92,6 +101,47 @@ function GenerateGame() {
               </>
             )}
           </button>
+
+
+          <div className="flex justify-between items-center px-1">
+             <div className="flex items-center gap-2">
+               <input 
+                 type="checkbox" 
+                 id="privacy-check"
+                 checked={isPrivate}
+                 onChange={(e) => setIsPrivate(e.target.checked)}
+                 className="w-4 h-4 rounded border-violet-300 text-violet-600 focus:ring-violet-500 cursor-pointer accent-violet-600"
+               />
+               <label htmlFor="privacy-check" className="text-violet-400 text-sm font-semibold tracking-wide cursor-pointer select-none hover:text-violet-600 transition-colors">
+                 Make Private
+               </label>
+             </div>
+
+             <div className="flex items-center gap-2">
+                <label htmlFor="num-questions" className="text-violet-400 text-sm font-semibold tracking-wide select-none">
+                  Questions:
+                </label>
+                <input
+                  type="number"
+                  id="num-questions"
+                  min="1"
+                  max="20"
+                  value={numQuestions}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    if (val === "") {
+                        setNumQuestions(""); 
+                        return;
+                    }
+                    const num = parseInt(val);
+                    if (num > 20) setNumQuestions(20);
+                    else if (num < 1) setNumQuestions(1);
+                    else setNumQuestions(num);
+                  }}
+                  className="bg-white border border-violet-200 text-violet-700 text-sm rounded-lg focus:ring-violet-500 focus:border-violet-500 block w-16 p-2 outline-none font-bold text-center"
+                />
+             </div>
+          </div>
         </form>
       </div>
 
@@ -121,14 +171,14 @@ function ModalController({ shouldOpen, windowName }) {
   return null;
 }
 
-function GamePreview({ game, onCloseModal, onPlay, isStarting }) {
+function GamePreview({ game, onPlay, isStarting }) {
   const navigate = useNavigate();
 
   return (
-    <div className="flex flex-col gap-6 w-[500px] max-h-[80vh]">
+    <div className="flex flex-col gap-6 w-full min-w-[300px] max-h-[80vh]">
       <div className="text-center space-y-2">
-        <h2 className="text-2xl font-bold text-violet-900">{game.title}</h2>
-        <p className="text-stone-500">{game.numQuestions} Questions Generated</p>
+        <h2 className="text-2xl font-bold text-violet-300">{game.title}</h2>
+        <p className="text-stone-400">{formatDesc(game.description)}</p>
       </div>
 
       <div className="flex-1 overflow-y-auto bg-stone-50 p-4 rounded-xl space-y-3">

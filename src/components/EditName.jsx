@@ -20,21 +20,21 @@ export default function EditName({ sessionId }) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex gap-2 items-center w-full max-w-xs mt-4">
+    <form onSubmit={handleSubmit} className="flex gap-2 items-center w-full md:max-w-xs">
       <input
         type="text"
         value={name}
         onChange={(e) => setName(e.target.value)}
         disabled={isUpdating}
-        className="flex-1 px-4 py-3 rounded-lg text-gray-800 text-lg font-bold bg-white/90 focus:outline-none focus:ring-4 focus:ring-green-400 shadow-lg"
-        placeholder="Enter nickname"
+        className="flex-1 px-3 py-2 md:px-4 md:py-3 rounded-lg text-gray-800 text-sm md:text-lg font-bold bg-white/90 focus:outline-none focus:ring-2 md:focus:ring-4 focus:ring-green-400 shadow-md md:shadow-lg min-w-0"
+        placeholder="Nickname"
       />
       <button
         type="submit"
         disabled={isUpdating || !name.trim()}
-        className="bg-green-500 text-white p-3 rounded-lg hover:bg-green-600 transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg flex items-center justify-center aspect-square h-full"
+        className="bg-green-500 text-white p-2 md:p-3 rounded-lg hover:bg-green-600 transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed shadow-md md:shadow-lg flex items-center justify-center aspect-square shrink-0"
       >
-        <FaCheckCircle size={24} />
+        <FaCheckCircle className="text-xl md:text-2xl" />
       </button>
     </form>
   );

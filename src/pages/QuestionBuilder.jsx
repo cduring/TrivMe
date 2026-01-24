@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import QuestionItem from "../components/QuestionItem";
 import QuestionList from "../components/QuestionList";
 import { useGetGame } from "../hooks/useGame";
@@ -35,9 +35,9 @@ export default function QuestionBuilder() {
   const [questions, setQuestions] = useState(defaultQuestions);
   const navigate = useNavigate();
 
-  function handleQuestionChange(index, updated) {
+  const handleQuestionChange = useCallback((index, updated) => {
     setQuestions((prev) => prev.map((q, i) => (i === index ? updated : q)));
-  }
+  }, []);
 
   function handleAddQuestion() {
     setQuestions((prev) => [
@@ -51,9 +51,9 @@ export default function QuestionBuilder() {
     ]);
   }
 
-  function handleDeleteQuestion(index) {
+  const handleDeleteQuestion = useCallback((index) => {
     setQuestions((prev) => prev.filter((_, i) => i !== index));
-  }
+  }, []);
 
   function handleSubmitQuestions() {
     const readyToSubmit = questions.reduce((acc, question) => 
@@ -180,7 +180,7 @@ export default function QuestionBuilder() {
             onClick={handleSubmitQuestions}
             className="w-full md:w-auto uppercase bg-pink-600 hover:bg-pink-500 text-white rounded-xl px-8 py-4 font-bold transition-all shadow-lg shadow-pink-500/30 hover:shadow-pink-500/50 hover:-translate-y-0.5"
           >
-            Submit All Questions
+            Submit New Questions
           </button>
         </section>
       </section>

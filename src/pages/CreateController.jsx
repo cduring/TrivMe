@@ -18,9 +18,17 @@ function CreateController() {
     return (
       <>
         {isLoadingUser && <Spinner />}
+        <style>{`
+          @keyframes breathe {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.15); opacity: 1; }
+          }
+        `}</style>
         <div className="h-[400px] flex flex-col font-normal justify-center items-center px-4 gap-10">
-          <ImConfused2 size={200} />
-          <div className="flex flex-col md:flex-row text-3xl gap-2">
+          <div className="animate-[spin_10s_linear_infinite]">
+            <ImConfused2 size={200} className="text-purple-300" style={{ animation: 'breathe 3s ease-in-out infinite' }} />
+          </div>
+          <div className="flex flex-col text-3xl gap-2">
             <h3 className="text-center">
               Sorry, you need to be{" "}
               <strong className="text-red-400">logged in</strong> to create a

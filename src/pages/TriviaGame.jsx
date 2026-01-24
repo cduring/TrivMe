@@ -9,6 +9,7 @@ import TriviaGameTimer from "../components/TriviaGameTimer";
 import TriviaQuestionDisplay from "../components/TriviaQuestionDisplay";
 import TriviaGameResults from "../components/TriviaGameResults";
 import { useUpdatePlayer, useGetPlayers } from "../hooks/usePlayer";
+import { HiPlay, HiOutlineClock } from "react-icons/hi2";
 
 export default function TriviaGame({ game, session }) {
   const { currentPlayer } = usePlayerContext();
@@ -121,17 +122,49 @@ export default function TriviaGame({ game, session }) {
 
   if (!currentQuestion) {
     return (
-      <div className="text-center p-10 text-white">
-        {isHost ? (
-          <div className="flex flex-col items-center gap-4">
-            <p className="text-xl mb-4">Start with the first question!</p>
-            <button className="next-question-btn" onClick={handleNextQuestion}>
-              Start Game
-            </button>
-          </div>
-        ) : (
-          <p className="text-xl">Waiting for first question...</p>
-        )}
+      <div className="flex flex-col items-center justify-center w-full max-w-2xl mx-auto mt-12 px-4">
+        <div className="bg-white/10 backdrop-blur-xl border border-white/20 p-10 rounded-3xl shadow-2xl text-center w-full flex flex-col items-center gap-6 relative overflow-hidden group">
+          {/* Decorative elements */}
+          <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500"></div>
+          <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-purple-500/20 rounded-full blur-3xl group-hover:bg-pink-500/20 transition-colors duration-500"></div>
+
+          {isHost ? (
+            <div className="flex flex-col items-center gap-6 z-10">
+              <div className="p-4 bg-white/10 rounded-full mb-2 animate-bounce">
+                <HiPlay className="text-5xl text-pink-400 ml-1" />
+              </div>
+              <h1 className="text-4xl md:text-5xl font-black text-white uppercase italic tracking-tighter drop-shadow-lg">
+                Are you ready?
+              </h1>
+              <p className="text-purple-200 text-lg font-medium max-w-md">
+                Your players are waiting on the edge of their seats! Kick off the first question when you're ready.
+              </p>
+              <button 
+                className="mt-4 px-8 py-4 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-400 hover:to-emerald-500 text-white rounded-2xl font-black text-2xl uppercase tracking-widest shadow-lg shadow-green-900/30 hover:-translate-y-1 hover:shadow-green-900/50 transition-all flex items-center gap-3 active:scale-95"
+                onClick={handleNextQuestion}
+              >
+                Let's Go! 🚀
+              </button>
+            </div>
+          ) : (
+            <div className="flex flex-col items-center gap-6 z-10">
+              <div className="p-4 bg-white/5 rounded-full mb-2 animate-pulse">
+                <HiOutlineClock className="text-6xl text-purple-300" />
+              </div>
+              <h1 className="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-pink-300 to-purple-300 uppercase italic tracking-tighter">
+                Get Ready!
+              </h1>
+              <div className="space-y-2">
+                <p className="text-white text-xl font-bold">
+                  The game is about to begin...
+                </p>
+                <p className="text-purple-200/70 text-sm italic">
+                  (Eye on the screen, fingers on the buttons!)
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     );
   }

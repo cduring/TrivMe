@@ -21,7 +21,7 @@ function Create() {
   const { errors } = formState;
 
   function onSubmit(data) {
-    const gameData = { ...data, ownerId: user.id };
+    const gameData = { ...data, ownerId: user.id, gameType: "Trivia" };
     createGame(gameData, {
       onSuccess: (game) => {
         const { id } = game;
@@ -73,15 +73,27 @@ function Create() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="flex flex-col gap-2">
-                <label className="font-semibold text-pink-50 ml-1">Game Type</label>
+                <label className="font-semibold text-pink-50 ml-1">Category</label>
                 <div className="relative">
                   <select
                     className="w-full p-4 rounded-xl border-2 border-pink-400 bg-pink-500/50 text-white focus:border-white focus:ring-4 focus:ring-pink-400/30 transition-all duration-300 text-lg outline-none appearance-none"
-                    {...register("gameType", { required: "Required" })}
-                    defaultValue={"Trivia"}
-                    disabled={true}
+                    {...register("category", { required: "Required" })}
+                    defaultValue={"General Knowledge"}
                   >
-                    <option value="Trivia" className="text-stone-800">Trivia</option>
+                    <option value="General Knowledge" className="text-stone-800">General Knowledge</option>
+                    <option value="Science & Nature" className="text-stone-800">Science & Nature</option>
+                    <option value="History" className="text-stone-800">History</option>
+                    <option value="Geography" className="text-stone-800">Geography</option>
+                    <option value="Entertainment" className="text-stone-800">Entertainment</option>
+                    <option value="Sports" className="text-stone-800">Sports</option>
+                    <option value="Art & Literature" className="text-stone-800">Art & Literature</option>
+                    <option value="Technology" className="text-stone-800">Technology</option>
+                    <option value="Music" className="text-stone-800">Music</option>
+                    <option value="Movies" className="text-stone-800">Movies</option>
+                    <option value="Television" className="text-stone-800">Television</option>
+                    <option value="Politics" className="text-stone-800">Politics</option>
+                    <option value="Celebrities" className="text-stone-800">Celebrities</option>
+                    <option value="Animals" className="text-stone-800">Animals</option>
                   </select>
                   <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-pink-200">
                     ▼

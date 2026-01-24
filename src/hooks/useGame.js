@@ -14,7 +14,7 @@ export function useGenerateGame() {
     isPending: isGenerating,
   } = useMutation({
     mutationFn: generateGameApi,
-    onError: (err) => toast.error(err.message),
+    onError: (err) => toast.error("Failed to generate :("),
   });
 
   return { generateGame, game, isLoading: isGenerating };

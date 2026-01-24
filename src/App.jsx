@@ -40,7 +40,7 @@ function App() {
           </BrowserRouter>
         </PlayerProvider>
       </AuthProvider>
-      <ReactQueryDevtools />
+      {import.meta.env.DEV && <ReactQueryDevtools />}
       <Toaster
         position="top-center"
         gutter={12}

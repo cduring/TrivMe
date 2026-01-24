@@ -86,36 +86,44 @@ function AuthForm({ mode = "login" }) {
       <div className="flex flex-col items-center w-full gap-6 pt-3">
         <form
           onSubmit={handleSubmit(onSubmit, onError)}
-          className="flex flex-col items-stretch w-full max-w-md bg-purple-800/70 border-4 border-purple-700 rounded-3xl px-6 py-6 gap-4 shadow-xl backdrop-blur-md"
+          className="flex flex-col items-stretch w-full max-w-md bg-purple-900/60 border border-purple-500/30 rounded-3xl px-8 py-8 gap-5 shadow-2xl backdrop-blur-xl relative overflow-hidden"
         >
-          <div className="text-center mb-2">
-            <h1 className="font-extrabold text-3xl leading-tight">{title}</h1>
-            <p className="text-purple-200/80 text-sm mt-1">
+          {/* Decorative glow */}
+          <div className="absolute -top-20 -right-20 w-40 h-40 bg-pink-500/20 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none" />
+
+          <div className="text-center mb-2 relative z-10">
+            <h1 className="font-black text-3xl md:text-4xl leading-tight text-transparent bg-clip-text bg-gradient-to-r from-white to-purple-200 drop-shadow-sm uppercase italic tracking-tight">
+              {title}
+            </h1>
+            <p className="text-purple-200/60 text-sm mt-2 font-medium tracking-wide">
               {isSignup
-                ? "Join TrivMe and start creating games"
+                ? "Join TrivMe and build your own game with AI"
                 : "Log in to continue your game"}
             </p>
           </div>
+
           <button
             type="button"
-            className="flex items-center justify-center gap-2 rounded-2xl bg-white text-gray-900 py-2.5 px-4 hover:opacity-90 active:opacity-80 transition-opacity"
+            className="relative z-10 flex items-center justify-center gap-3 rounded-2xl bg-white text-gray-900 py-3 px-4 hover:bg-gray-50 active:scale-[0.98] transition-all shadow-lg font-bold group"
             onClick={() => onOAuthSignIn("google")}
           >
-            <FcGoogle size={22} />
-            <span className="font-semibold">{googleCta}</span>
+            <FcGoogle size={24} className="group-hover:scale-110 transition-transform" />
+            <span className="font-bold tracking-tight">{googleCta}</span>
           </button>
-          <div className="relative my-1 flex items-center">
-            <div className="flex-1 h-px bg-purple-600/70" />
-            <span className="px-3 text-xs uppercase tracking-wider text-purple-200/80">
+
+          <div className="relative my-2 flex items-center z-10">
+            <div className="flex-1 h-px bg-gradient-to-r from-transparent via-purple-400/30 to-transparent" />
+            <span className="px-3 text-xs uppercase tracking-[0.2em] text-purple-300/50 font-bold">
               or
             </span>
-            <div className="flex-1 h-px bg-purple-600/70" />
+            <div className="flex-1 h-px bg-gradient-to-r from-transparent via-purple-400/30 to-transparent" />
           </div>
 
           <FormRow label="Email" error={errors?.email?.message}>
             <input
               type="email"
-              className="bg-purple-600/80 focus:bg-purple-600 rounded-2xl w-full px-3 py-2 text-center placeholder-purple-200/70 focus:outline-none focus:ring-2 focus:ring-purple-300"
+              className="bg-purple-950/40 border border-purple-500/20 rounded-2xl w-full px-4 py-3 text-center placeholder-purple-400/30 focus:outline-none focus:border-pink-500/50 focus:ring-4 focus:ring-pink-500/10 transition-all text-white font-medium tracking-wide shadow-inner"
               placeholder="you@example.com"
               {...register("email", {
                 required: "This field is required",
@@ -130,7 +138,7 @@ function AuthForm({ mode = "login" }) {
           <FormRow label="Password" error={errors?.password?.message}>
             <input
               type="password"
-              className="bg-purple-600/80 focus:bg-purple-600 rounded-2xl w-full px-3 py-2 text-center placeholder-purple-200/70 focus:outline-none focus:ring-2 focus:ring-purple-300"
+              className="bg-purple-950/40 border border-purple-500/20 rounded-2xl w-full px-4 py-3 text-center placeholder-purple-400/30 focus:outline-none focus:border-pink-500/50 focus:ring-4 focus:ring-pink-500/10 transition-all text-white font-medium tracking-wide shadow-inner"
               placeholder={
                 isSignup ? "Create a strong password" : "Your password"
               }
@@ -147,7 +155,7 @@ function AuthForm({ mode = "login" }) {
             >
               <input
                 type="password"
-                className="bg-purple-600/80 focus:bg-purple-600 rounded-2xl w-full px-3 py-2 text-center placeholder-purple-200/70 focus:outline-none focus:ring-2 focus:ring-purple-300"
+                className="bg-purple-950/40 border border-purple-500/20 rounded-2xl w-full px-4 py-3 text-center placeholder-purple-400/30 focus:outline-none focus:border-pink-500/50 focus:ring-4 focus:ring-pink-500/10 transition-all text-white font-medium tracking-wide shadow-inner"
                 placeholder="Repeat your password"
                 {...register("passwordConfirm", {
                   required: "This field is required",
@@ -160,12 +168,12 @@ function AuthForm({ mode = "login" }) {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="uppercase bg-purple-600 hover:bg-purple-500 disabled:opacity-60 rounded-2xl px-4 py-2 mt-2 font-bold tracking-wide shadow-md transition-colors"
+            className="uppercase bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 disabled:opacity-60 disabled:cursor-not-allowed rounded-2xl px-4 py-3 mt-4 font-black tracking-[0.1em] shadow-lg shadow-purple-900/40 hover:-translate-y-0.5 hover:shadow-purple-900/60 active:translate-y-0 transition-all z-10 text-white"
           >
             {ctaText}
           </button>
         </form>
-        <div className="text-xl font-normal">
+        <div className="text-xl font-normal text-purple-100/80">
           {isSignup ? (
             <>
               <span className="italic">

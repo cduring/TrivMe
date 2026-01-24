@@ -22,7 +22,15 @@ function Login() {
     return (
       <div className="h-[400px] flex flex-col font-normal justify-center items-center px-4 gap-15">
         {isSigningOut && <Spinner />}
-        <ImSleepy size={200} />
+        <style>{`
+          @keyframes breathe {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.15); opacity: 1; }
+          }
+        `}</style>
+        <div className="animate-[spin_10s_linear_infinite]">
+          <ImSleepy size={200} className="text-purple-300" style={{ animation: 'breathe 3s ease-in-out infinite' }} />
+        </div>
         <div className="flex flex-col md:flex-row text-3xl font-normal justify-center items-center px-4">
           <h3>You are already logged in, &nbsp;</h3>
           <button
