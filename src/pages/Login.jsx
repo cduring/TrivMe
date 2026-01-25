@@ -31,7 +31,7 @@ function Login() {
         <div className="animate-[spin_10s_linear_infinite]">
           <ImSleepy size={200} className="text-purple-300" style={{ animation: 'breathe 3s ease-in-out infinite' }} />
         </div>
-        <div className="flex flex-col md:flex-row text-3xl font-normal justify-center items-center px-4">
+        <div className="flex flex-col md:flex-row text-3xl font-normal justify-center items-center px-4 text-center">
           <h3>You are already logged in, &nbsp;</h3>
           <button
             className="font-semibold underline hover:text-red-500 transition-colors duration-150 ease-in-out cursor-pointer"

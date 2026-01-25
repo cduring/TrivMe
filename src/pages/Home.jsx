@@ -36,6 +36,7 @@ function Home() {
         "Politics",
         "Celebrities",
         "Animals",
+        "Video Games"
     ];
   }, []);
   

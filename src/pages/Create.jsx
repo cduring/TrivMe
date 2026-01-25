@@ -94,6 +94,7 @@ function Create() {
                     <option value="Politics" className="text-stone-800">Politics</option>
                     <option value="Celebrities" className="text-stone-800">Celebrities</option>
                     <option value="Animals" className="text-stone-800">Animals</option>
+                    <option value="Video Games" className="text-stone-800">Video Games</option>
                   </select>
                   <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-pink-200">
                     ▼
